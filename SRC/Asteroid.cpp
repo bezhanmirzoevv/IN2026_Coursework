@@ -33,3 +33,9 @@ void Asteroid::OnCollision(const GameObjectList& objects)
 	mWorld->FlagForRemoval(GetThisPtr());
 }
 
+void Asteroid::ChangePosition()
+{
+	mPosition.x = rand() / 2;
+	mPosition.y = rand() / 2;
+}
+

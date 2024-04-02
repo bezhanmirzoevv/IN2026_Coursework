@@ -92,6 +92,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	case ' ':
 		mSpaceship->Shoot();
 		break;
+	case '\n':
+		//Asteroids-> 
 	default:
 		break;
 	}
@@ -206,7 +208,9 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 		asteroid->SetBoundingShape(make_shared<BoundingSphere>(asteroid->GetThisPtr(), 10.0f));
 		asteroid->SetSprite(asteroid_sprite);
 		asteroid->SetScale(0.2f);
+		//Change the asteroids position if it spawns on top of player
 		mGameWorld->AddObject(asteroid);
+		
 	}
 }
 
