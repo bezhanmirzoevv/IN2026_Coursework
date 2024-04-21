@@ -11,6 +11,7 @@
 #include "BoundingSphere.h"
 #include "GUILabel.h"
 #include "Explosion.h"
+#include "GUIButton.h"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -59,8 +60,7 @@ void Asteroids::Start()
 	Animation *asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation *spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
-	// Create a spaceship and add it to the world
-	// mGameWorld->AddObject(CreateSpaceship());
+	
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
@@ -90,13 +90,22 @@ void Asteroids::Stop()
 
 void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
-	switch (key)
+	
+	switch (key, mStart_Screen)
 	{
-	case ' ':
+	case 'e' && false:
 		mSpaceship->Shoot();
 		break;
-	case '\n':
-		mGameOverLabel->SetVisible(false);
+	case 'e' && true:
+		mStart_Screen = false;
+		mStartLabel->SetVisible(false);
+		mScoreLabel->SetVisible(true);
+		mLivesLabel->SetVisible(true);
+
+		// Create a spaceship and add it to the world
+		mGameWorld->AddObject(CreateSpaceship());
+		break;
+
 	default:
 		break;
 	}
@@ -106,16 +115,18 @@ void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
 
 void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 {
-	switch (key)
-	{
-	// If up arrow key is pressed start applying forward thrust
-	case GLUT_KEY_UP: mSpaceship->Thrust(10); break;
-	// If left arrow key is pressed start rotating anti-clockwise
-	case GLUT_KEY_LEFT: mSpaceship->Rotate(90); break;
-	// If right arrow key is pressed start rotating clockwise
-	case GLUT_KEY_RIGHT: mSpaceship->Rotate(-90); break;
-	// Default case - do nothing
-	default: break;
+	if (!mStart_Screen) {
+		switch (key)
+		{
+			// If up arrow key is pressed start applying forward thrust
+		case GLUT_KEY_UP: mSpaceship->Thrust(10); break;
+			// If left arrow key is pressed start rotating anti-clockwise
+		case GLUT_KEY_LEFT: mSpaceship->Rotate(90); break;
+			// If right arrow key is pressed start rotating clockwise
+		case GLUT_KEY_RIGHT: mSpaceship->Rotate(-90); break;
+			// Default case - do nothing
+		default: break;
+		}
 	}
 }
 
@@ -259,17 +270,35 @@ void Asteroids::CreateGUI()
 		= static_pointer_cast<GUIComponent>(mGameOverLabel);
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
 
-	// Create a new GUIButton and wrap it up in a shared_ptr
-	mStartLabel = shared_ptr<GUILabel>(new GUILabel("Start"));
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mStartLabel = shared_ptr<GUILabel>(new GUILabel("Start (Space)"));
 	// Set the horizontal alignment of the button to GUI_HALIGN_CENTER
 	mStartLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
 	// Set the vertical alignment of the button to GUI_VALIGN_MIDDLE
-	mStartLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOPMIDDLEMIDDLE);
+	mStartLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
 	// Set the visibility of the button to true (visible)
 	mStartLabel->SetVisible(true);
 	// Add the GUIButton to the GUIContainer  
-	shared_ptr<GUIComponent> start_button_component = static_pointer_cast<GUIComponent>(mStartLabel);
-	mGameDisplay->GetContainer()->AddComponent(start_button_component, GLVector2f(0.5f, 0.3f));
+	shared_ptr<GUIComponent> start_label_component = static_pointer_cast<GUIComponent>(mStartLabel);
+	mGameDisplay->GetContainer()->AddComponent(start_label_component, GLVector2f(0.5f, 0.3f));
+
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mHighScoreLabel = shared_ptr<GUILabel>(new GUILabel("High Score Table (s)"));
+	// Set the horizontal alignment of the button to GUI_HALIGN_CENTER
+	mHighScoreLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the button to GUI_VALIGN_MIDDLE
+	mHighScoreLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
+	// Set the visibility of the button to true (visible)
+	mHighScoreLabel->SetVisible(true);
+	// Add the GUIButton to the GUIContainer  
+	shared_ptr<GUIComponent> high_score_component = static_pointer_cast<GUIComponent>(mHighScoreLabel);
+	mGameDisplay->GetContainer()->AddComponent(high_score_component, GLVector2f(0.5f, 0.25f));
+
+	//Start Button
+	//mStartButton = shared_ptr<GUIButton>(new GUIButton(1.0f, 1.0f, 1.0f, 1.0f));
+	//shared_ptr<GUIComponent> start_button_component = static_pointer_cast<GUIComponent>(mStartButton);
+	//mGameDisplay->GetContainer()->AddComponent(start_button_component, GLVector2f(0.5f, 0.3f));
+	
 }
 
 void Asteroids::OnScoreChanged(int score)

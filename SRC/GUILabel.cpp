@@ -14,7 +14,7 @@ GUILabel::GUILabel(const string& text) : mText(text), mFontWidth(9), mFontHeight
 }
 
 /**Construct Label with Given width and height. */
-GUILabel::GUILabel(const string& text, const int& FontWidth, const int& FontHeight) : mText(text), mFontWidth(FontWidth), mFontHeight(FontHeight)
+GUILabel::GUILabel(const string& text, int FontWidth, int FontHeight) : mText(text), mFontWidth(FontWidth), mFontHeight(FontHeight)
 {
 }
 
@@ -44,9 +44,11 @@ void GUILabel::Draw()
 	if (mVerticalAlignment == GUIComponent::GUI_VALIGN_TOP) {
 		align_y = -h;
 	} else if (mVerticalAlignment == GUIComponent::GUI_VALIGN_MIDDLE) {
-		align_y = -h/2;
+		align_y = -h / 2;
 	}else if (mVerticalAlignment == GUIComponent::GUI_VALIGN_TOPMIDDLEMIDDLE) {
 		align_y = -h / 4;
+	}else if (mVerticalAlignment == GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE) {
+		align_y = h / 4;
 	}
 
 	glDisable(GL_LIGHTING);

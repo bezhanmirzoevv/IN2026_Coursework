@@ -10,9 +10,11 @@
 #include "Player.h"
 #include "IPlayerListener.h"
 
+
 class GameObject;
 class Spaceship;
 class GUILabel;
+class GUIButton;
 
 class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
 {
@@ -53,6 +55,9 @@ private:
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
 	shared_ptr<GUILabel> mStartLabel;
+	shared_ptr<GUILabel> mHighScoreLabel;
+	shared_ptr<GUIButton> mStartButton;
+	
 
 	uint mLevel;
 	uint mAsteroidCount;
