@@ -12,6 +12,8 @@
 #include "GUILabel.h"
 #include "Explosion.h"
 #include "GUIButton.h"
+#include <fstream>
+#include "HighScoreTable.cpp"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -107,18 +109,20 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		switch (key) {
 		case ' ':
 			mScreen = 1;
-			mStartLabel->SetVisible(false);
-			mHighScoreLabel->SetVisible(false);
+			mStartLabel1->SetVisible(false);
+			mHighScoreLabel1->SetVisible(false);
 			mScoreLabel->SetVisible(true);
 			mLivesLabel->SetVisible(true);
 
 			// Create a spaceship and add it to the world
 			mGameWorld->AddObject(CreateSpaceship());
 			break;
-		case 'e':
+		case 's':
 			mScreen = 3;
-			mStartLabel->SetVisible(false);
-			mHighScoreLabel->SetText("High Score");
+			mStartLabel1->SetVisible(false);
+			mStartLabel2->SetVisible(true);
+			mHighScoreLabel1->SetVisible(false);
+			mHighScoreLabel2->SetVisible(true);
 			break;
 		default:
 			break;
@@ -130,8 +134,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		switch (key) {
 		case ' ':
 			mScreen = 1;
-			mStartLabel->SetVisible(false);
-			mHighScoreLabel->SetVisible(false);
+			mStartLabel2->SetVisible(false);
+			mHighScoreLabel2->SetVisible(false);
 			mScoreLabel->SetVisible(true);
 			mLivesLabel->SetVisible(true);
 			// Create a spaceship and add it to the world
@@ -168,17 +172,19 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 
 void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 {
-	switch (key)
-	{
-	// If up arrow key is released stop applying forward thrust
-	case GLUT_KEY_UP: mSpaceship->Thrust(0); break;
-	// If left arrow key is released stop rotating
-	case GLUT_KEY_LEFT: mSpaceship->Rotate(0); break;
-	// If right arrow key is released stop rotating
-	case GLUT_KEY_RIGHT: mSpaceship->Rotate(0); break;
-	// Default case - do nothing
-	default: break;
-	} 
+	if (mScreen == 1) {
+		switch (key)
+		{
+			// If up arrow key is released stop applying forward thrust
+		case GLUT_KEY_UP: mSpaceship->Thrust(0); break;
+			// If left arrow key is released stop rotating
+		case GLUT_KEY_LEFT: mSpaceship->Rotate(0); break;
+			// If right arrow key is released stop rotating
+		case GLUT_KEY_RIGHT: mSpaceship->Rotate(0); break;
+			// Default case - do nothing
+		default: break;
+		}
+	}
 }
 
 
@@ -220,6 +226,7 @@ void Asteroids::OnTimer(int value)
 	if (value == SHOW_GAME_OVER)
 	{
 		mGameOverLabel->SetVisible(true);
+		mhighscoretable.SaveScores("bezhan", mScoreKeeper.getScore());
 	}
 
 	if (value == START_SCREEN)
@@ -307,29 +314,41 @@ void Asteroids::CreateGUI()
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
 
 	// Create a new GUILabel and wrap it up in a shared_ptr
-	mStartLabel = shared_ptr<GUILabel>(new GUILabel("Start (Space)"));
+	mStartLabel1 = shared_ptr<GUILabel>(new GUILabel("Start (Space)"));
+	mStartLabel2 = shared_ptr<GUILabel>(new GUILabel("Start (Space)"));
 	// Set the horizontal alignment of the button to GUI_HALIGN_CENTER
-	mStartLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	mStartLabel1->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	mStartLabel2->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
 	// Set the vertical alignment of the button to GUI_VALIGN_MIDDLE
-	mStartLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
+	mStartLabel1->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
+	mStartLabel2->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
 	// Set the visibility of the button to true (visible)
-	mStartLabel->SetVisible(true);
-	// Add the GUIButton to the GUIContainer  
-	shared_ptr<GUIComponent> start_label_component = static_pointer_cast<GUIComponent>(mStartLabel);
+	mStartLabel2->SetVisible(false);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> start_label_component = static_pointer_cast<GUIComponent>(mStartLabel1);
+	shared_ptr<GUIComponent> start_label_component2 = static_pointer_cast<GUIComponent>(mStartLabel2);
 	mGameDisplay->GetContainer()->AddComponent(start_label_component, GLVector2f(0.5f, 0.3f));
+	mGameDisplay->GetContainer()->AddComponent(start_label_component2, GLVector2f(0.5f, 0.1f));
 
 	// Create a new GUILabel and wrap it up in a shared_ptr
-	mHighScoreLabel = shared_ptr<GUILabel>(new GUILabel("High Score Table (s)"));
+	mHighScoreLabel1 = shared_ptr<GUILabel>(new GUILabel("High Score Table (s)"));
+	mHighScoreLabel2 = shared_ptr<GUILabel>(new GUILabel("High Score Table"));
 	// Set the horizontal alignment of the button to GUI_HALIGN_CENTER
-	mHighScoreLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	mHighScoreLabel1->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	mHighScoreLabel2->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
 	// Set the vertical alignment of the button to GUI_VALIGN_MIDDLE
-	mHighScoreLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
+	mHighScoreLabel1->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
+	mHighScoreLabel2->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOP);
 	// Set the visibility of the button to true (visible)
-	mHighScoreLabel->SetVisible(true);
-	// Add the GUIButton to the GUIContainer  
-	shared_ptr<GUIComponent> high_score_component = static_pointer_cast<GUIComponent>(mHighScoreLabel);
+	mHighScoreLabel1->SetVisible(true);
+	mHighScoreLabel2->SetVisible(false);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> high_score_component = static_pointer_cast<GUIComponent>(mHighScoreLabel1);
+	shared_ptr<GUIComponent> high_score_component2 = static_pointer_cast<GUIComponent>(mHighScoreLabel2);
 	mGameDisplay->GetContainer()->AddComponent(high_score_component, GLVector2f(0.5f, 0.25f));
+	mGameDisplay->GetContainer()->AddComponent(high_score_component2, GLVector2f(0.5f, 0.9f));
 
+	//map mscores
 	//Start Button
 	//mStartButton = shared_ptr<GUIButton>(new GUIButton(1.0f, 1.0f, 1.0f, 1.0f));
 	//shared_ptr<GUIComponent> start_button_component = static_pointer_cast<GUIComponent>(mStartButton);

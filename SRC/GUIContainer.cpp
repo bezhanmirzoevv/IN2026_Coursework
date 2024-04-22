@@ -46,6 +46,7 @@ void GUIContainer::SetSize(const GLVector2i& size)
 	LayoutComponents();
 }
 
+
 /** Layout all of this container's components using relative positions. */
 void GUIContainer::LayoutComponents()
 {

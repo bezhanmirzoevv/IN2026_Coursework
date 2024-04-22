@@ -9,6 +9,7 @@
 #include "ScoreKeeper.h"
 #include "Player.h"
 #include "IPlayerListener.h"
+#include "HighScoreTable.h"
 
 
 class GameObject;
@@ -54,8 +55,10 @@ private:
 	shared_ptr<GUILabel> mScoreLabel;
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
-	shared_ptr<GUILabel> mStartLabel;
-	shared_ptr<GUILabel> mHighScoreLabel;
+	shared_ptr<GUILabel> mStartLabel1;
+	shared_ptr<GUILabel> mStartLabel2;
+	shared_ptr<GUILabel> mHighScoreLabel1;
+	shared_ptr<GUILabel> mHighScoreLabel2;
 	shared_ptr<GUIButton> mStartButton;
 	
 
@@ -76,6 +79,7 @@ private:
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
+	HighScoreTable mhighscoretable;
 };
 
 #endif

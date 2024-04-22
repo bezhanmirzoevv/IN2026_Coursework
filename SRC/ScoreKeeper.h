@@ -16,6 +16,7 @@ public:
 
 	void OnWorldUpdated(GameWorld* world) {}
 	void OnObjectAdded(GameWorld* world, shared_ptr<GameObject> object) {}
+	int getScore() { return this->mScore; }
 
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
