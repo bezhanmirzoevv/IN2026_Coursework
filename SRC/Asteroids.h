@@ -61,7 +61,7 @@ private:
 
 	uint mLevel;
 	uint mAsteroidCount;
-	bool mStart_Screen;
+	uint mScreen;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();

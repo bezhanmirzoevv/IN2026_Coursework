@@ -16,12 +16,12 @@
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
 /** Constructor. Takes arguments from command line, just in case. */
-Asteroids::Asteroids(int argc, char *argv[])
+Asteroids::Asteroids(int argc, char* argv[])
 	: GameSession(argc, argv)
 {
 	mLevel = 0;
 	mAsteroidCount = 0;
-	mStart_Screen = true;
+	mScreen = 1;
 }
 
 /** Destructor. */
@@ -90,21 +90,54 @@ void Asteroids::Stop()
 
 void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
-	
-	switch (key, mStart_Screen)
-	{
-	case 'e' && false:
-		mSpaceship->Shoot();
-		break;
-	case 'e' && true:
-		mStart_Screen = false;
-		mStartLabel->SetVisible(false);
-		mScoreLabel->SetVisible(true);
-		mLivesLabel->SetVisible(true);
+	switch (mScreen) {
+	//game screen
+	case 2:
+		switch (key) {
+		case ' ':
+			mSpaceship->Shoot();
+			break;
+		default:
+			break;
+		}
 
-		// Create a spaceship and add it to the world
-		mGameWorld->AddObject(CreateSpaceship());
-		break;
+	//start screen 
+	case 1:
+		switch (key) {
+		case ' ':
+			mScreen = 2;
+			mStartLabel->SetVisible(false);
+			mHighScoreLabel->SetVisible(false);
+			mScoreLabel->SetVisible(true);
+			mLivesLabel->SetVisible(true);
+
+			// Create a spaceship and add it to the world
+			mGameWorld->AddObject(CreateSpaceship());
+			break;
+		case 'e':
+			mScreen = 3;
+			mStartLabel->SetVisible(false);
+			mHighScoreLabel->SetText("High Score");
+			break;
+		default:
+			break;
+		}
+
+	//high score screen
+	case 3:
+		switch (key) {
+		case ' ':
+			mScreen = 1;
+			mStartLabel->SetVisible(false);
+			mHighScoreLabel->SetVisible(false);
+			mScoreLabel->SetVisible(true);
+			mLivesLabel->SetVisible(true);
+			// Create a spaceship and add it to the world
+			mGameWorld->AddObject(CreateSpaceship());
+			break;
+		default:
+			break;
+		}	
 
 	default:
 		break;
@@ -115,7 +148,7 @@ void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
 
 void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 {
-	if (!mStart_Screen) {
+	if (mScreen == 2) {
 		switch (key)
 		{
 			// If up arrow key is pressed start applying forward thrust
