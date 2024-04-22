@@ -123,6 +123,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mStartLabel2->SetVisible(true);
 			mHighScoreLabel1->SetVisible(false);
 			mHighScoreLabel2->SetVisible(true);
+			mhighscoretable.printScores(mGameDisplay);
 			break;
 		default:
 			break;
@@ -138,6 +139,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mHighScoreLabel2->SetVisible(false);
 			mScoreLabel->SetVisible(true);
 			mLivesLabel->SetVisible(true);
+			mhighscoretable.removeScores(mGameDisplay);
 			// Create a spaceship and add it to the world
 			mGameWorld->AddObject(CreateSpaceship());
 			break;

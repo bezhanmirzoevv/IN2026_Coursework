@@ -1,2 +1,2 @@
 bezhan 30
-zac 40
+zac 560
