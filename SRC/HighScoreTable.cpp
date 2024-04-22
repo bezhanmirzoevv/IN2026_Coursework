@@ -1,5 +1,9 @@
-#include <fstream>
 #include "HighScoreTable.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <map>
 using namespace std;
 
 /*HighScoreTable::printScores(GameDisplay a, GUILabel b) {
@@ -18,10 +22,29 @@ using namespace std;
 }
 */
 
-void HighScoreTable::SaveScores(string s, int b)
+void HighScoreTable::SaveScores(string playerName, int playerScore)
 {
-	std::ofstream file;
-	file.open("HighScores.txt", std::ios_base::app);
-	file << s << " " << b << endl;
+	std::ifstream file("HighScores.txt");
+	std::string name;
+	int score;
+	bool store = false;
+	while (file >> name >> score) {
+		scoreMap.insert(make_pair(name, score));
+		if (name == playerName) {
+			if (score < playerScore) {
+				store = true;
+				scoreMap[playerName] = playerScore;
+			}
+			break;
+		}
+	}
 	file.close();
+	if (store) {
+		std::fstream file("HighScores.txt");
+		for (auto& pair : scoreMap) {
+			file << pair.first << " " << pair.second << endl;
+		}
+	}
+	file.close();
+	
 }

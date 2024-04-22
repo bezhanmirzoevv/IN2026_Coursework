@@ -2,6 +2,7 @@
 #define __HIGHSCORETABLE_H__
 #include "GameDisplay.h"
 #include "GUILabel.h"
+#include <map>
 using namespace std;
 
 class HighScoreTable 
@@ -11,7 +12,7 @@ public:
 	void SaveScores(string s, int b);
 
 protected:
-
+	map<string, int> scoreMap;
 };
 
 #endif

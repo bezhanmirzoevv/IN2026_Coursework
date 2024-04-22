@@ -226,7 +226,8 @@ void Asteroids::OnTimer(int value)
 	if (value == SHOW_GAME_OVER)
 	{
 		mGameOverLabel->SetVisible(true);
-		mhighscoretable.SaveScores("bezhan", mScoreKeeper.getScore());
+		//store the score in the file
+		mhighscoretable.SaveScores("zac", mScoreKeeper.getScore());
 	}
 
 	if (value == START_SCREEN)
