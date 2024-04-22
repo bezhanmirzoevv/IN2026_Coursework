@@ -21,7 +21,7 @@ Asteroids::Asteroids(int argc, char* argv[])
 {
 	mLevel = 0;
 	mAsteroidCount = 0;
-	mScreen = 1;
+	mScreen = 2;
 }
 
 /** Destructor. */
@@ -92,7 +92,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
 	switch (mScreen) {
 	//game screen
-	case 2:
+	case 1:
 		switch (key) {
 		case ' ':
 			mSpaceship->Shoot();
@@ -100,12 +100,13 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		default:
 			break;
 		}
+		break;
 
 	//start screen 
-	case 1:
+	case 2:
 		switch (key) {
 		case ' ':
-			mScreen = 2;
+			mScreen = 1;
 			mStartLabel->SetVisible(false);
 			mHighScoreLabel->SetVisible(false);
 			mScoreLabel->SetVisible(true);
@@ -122,6 +123,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		default:
 			break;
 		}
+		break;
 
 	//high score screen
 	case 3:
@@ -137,7 +139,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			break;
 		default:
 			break;
-		}	
+		}
+		break;
 
 	default:
 		break;
@@ -148,7 +151,7 @@ void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
 
 void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 {
-	if (mScreen == 2) {
+	if (mScreen == 1) {
 		switch (key)
 		{
 			// If up arrow key is pressed start applying forward thrust
