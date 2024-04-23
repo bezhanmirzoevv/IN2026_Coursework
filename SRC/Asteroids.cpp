@@ -229,7 +229,7 @@ void Asteroids::OnTimer(int value)
 	{
 		mGameOverLabel->SetVisible(true);
 		//store the score in the file
-		mhighscoretable.SaveScores("zac", mScoreKeeper.getScore());
+		mhighscoretable.SaveScores("jack", mScoreKeeper.getScore());
 	}
 
 	if (value == START_SCREEN)

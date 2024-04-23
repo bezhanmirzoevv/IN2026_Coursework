@@ -125,26 +125,39 @@ void HighScoreTable::SaveScores(string playerName, int playerScore)
 	std::ifstream file("HighScores.txt");
 	std::string name;
 	int score;
-	bool store = false;
+	int store = 0;
 	while (file >> name >> score) {
 		scoreMap.insert(make_pair(name, score));
 		if (name == playerName) {
 			if (score < playerScore) {
-				store = true;
+				store = 1;
 				scoreMap[playerName] = playerScore;
+			}else {
+				store = 3;
 			}
 			break;
 		}
 	}
 	file.close();
 
-
-	if (store) {
-		std::fstream file("HighScores.txt");
-		for (auto& pair : scoreMap) {
-			file << pair.first << " " << pair.second << endl;
-		}
+	switch (store) {
+	case 0:
+	{
+		std::ofstream file3;
+		file3.open("HighScores.txt", std::ios_base::app); // append instead of overwrite
+		file3 << playerName << " " << playerScore;
+		file3.close();
 	}
-	file.close();
-	
+		break;
+
+	case 1:
+	{
+		std::fstream file1("HighScores.txt");
+		for (auto& pair : scoreMap) {
+			file1 << pair.first << " " << pair.second << endl;
+		}
+		file1.close();
+	}
+		break;
+	}
 }

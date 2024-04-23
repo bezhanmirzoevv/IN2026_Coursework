@@ -1,2 +1,3 @@
 bezhan 30
-zac 560
+zac 30
+jack30
