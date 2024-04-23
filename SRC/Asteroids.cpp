@@ -74,9 +74,14 @@ void Asteroids::Start()
 	mGameWorld->AddListener(&mPlayer);
 	mGameWorld->AddListener(&mComputer);
 
+
+	//mGameWorld->AddObject(CreateSpaceship());
+
 	// Add this class as a listener of the player
 	mPlayer.AddListener(thisPtr);
 	mComputer.AddListener(thisPtr);
+
+	
 
 	// Start the game
 	GameSession::Start();
@@ -100,8 +105,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	case 1:
 		switch (key) {
 		case ' ':
-			mComputerSpaceShip->Shoot();
-			//mSpaceship->Shoot();
+			//mComputerSpaceShip->Shoot();
+			mSpaceship->Shoot();
 			break;
 		default:
 			break;
@@ -119,8 +124,10 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mLivesLabel->SetVisible(true);
 
 			// Create a spaceship and add it to the world
-			mGameWorld->AddObject(CreateComputerSpaceShip());
-			//mGameWorld->AddObject(CreateSpaceship());
+			//mGameWorld->FlagForRemoval(mSpaceship);
+			//mComputerSpaceShip->~ComputerSpaceShip();
+			//mGameWorld->AddObject(CreateComputerSpaceShip());
+			mGameWorld->AddObject(CreateSpaceship());
 			break;
 		case 's':
 			mScreen = 3;
@@ -166,11 +173,11 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 		switch (key)
 		{
 			// If up arrow key is pressed start applying forward thrust
-		case GLUT_KEY_UP: /*mSpaceship->Thrust(10); */ mComputerSpaceShip->Thrust(10); break;
+		case GLUT_KEY_UP: mSpaceship->Thrust(10);  /*mComputerSpaceShip->Thrust(10);*/ break;
 			// If left arrow key is pressed start rotating anti-clockwise
-		case GLUT_KEY_LEFT: /*mSpaceship->Rotate(90); */ mComputerSpaceShip->Rotate(90); break;
+		case GLUT_KEY_LEFT: mSpaceship->Rotate(90);  /*mComputerSpaceShip->Rotate(90);*/ break;
 			// If right arrow key is pressed start rotating clockwise
-		case GLUT_KEY_RIGHT: /*mSpaceship->Rotate(-90); */ mComputerSpaceShip->Rotate(-90); break;
+		case GLUT_KEY_RIGHT: mSpaceship->Rotate(-90);  /*mComputerSpaceShip->Rotate(-90);*/ break;
 			// Default case - do nothing
 		default: break;
 		}
@@ -183,11 +190,11 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 		switch (key)
 		{
 			// If up arrow key is released stop applying forward thrust
-		case GLUT_KEY_UP: /*mSpaceship->Thrust(0); */ mComputerSpaceShip->Thrust(0); break;
+		case GLUT_KEY_UP: mSpaceship->Thrust(0); /*mComputerSpaceShip->Thrust(0);*/ break;
 			// If left arrow key is released stop rotating
-		case GLUT_KEY_LEFT: /*mSpaceship->Rotate(0); */ mComputerSpaceShip->Rotate(0); break;
+		case GLUT_KEY_LEFT: mSpaceship->Rotate(0); /*mComputerSpaceShip->Rotate(0);*/ break;
 			// If right arrow key is released stop rotating
-		case GLUT_KEY_RIGHT: /*mSpaceship->Rotate(0); */ mComputerSpaceShip->Rotate(0); break;
+		case GLUT_KEY_RIGHT: mSpaceship->Rotate(0);/* mComputerSpaceShip->Rotate(0);*/ break;
 			// Default case - do nothing
 		default: break;
 		}
@@ -199,7 +206,7 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 
 void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 {
-	if (object->GetType() == GameObjectType("Asteroid") && mScreen == 1)
+	if (object->GetType() == GameObjectType("Asteroid"))
 	{
 		shared_ptr<GameObject> explosion = CreateExplosion();
 		explosion->SetPosition(object->GetPosition());

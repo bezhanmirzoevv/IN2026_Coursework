@@ -43,6 +43,7 @@ public:
 	// Declaration of the IPlayerListener interface //////////////////////////////
 
 	void OnPlayerKilled(int lives_left);
+
 	void OnComputerKilled();
 
 	// Declaration of IGameWorldListener interface //////////////////////////////
