@@ -4,7 +4,7 @@
 class IComputerListener
 {
 public:
-	virtual void OnComputerKilled() = 0;
+	virtual void OnComputerKilled(int lives_left) = 0;
 };
 
 #endif

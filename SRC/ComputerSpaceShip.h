@@ -5,6 +5,8 @@
 #include "GameObject.h"
 #include "Shape.h"
 
+using namespace std;
+
 class ComputerSpaceShip : public GameObject
 {
 public:

@@ -36,7 +36,7 @@ public:
 		// Send message to all listeners
 		for (ComputerListenerList::iterator lit = mListeners.begin();
 			lit != mListeners.end(); ++lit) {
-			(*lit)->OnComputerKilled();
+			(*lit)->OnComputerKilled(mLives);
 		}
 	}
 

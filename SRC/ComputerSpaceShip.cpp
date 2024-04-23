@@ -104,5 +104,5 @@ bool ComputerSpaceShip::CollisionTest(shared_ptr<GameObject> o)
 void ComputerSpaceShip::OnCollision(const GameObjectList& objects)
 {
 	//this->Reset();
-	//mWorld->FlagForRemoval(GetThisPtr());
+	//mWorld->RemoveObject(GetThisPtr());
 }
