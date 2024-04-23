@@ -8,16 +8,19 @@
 #include "IScoreListener.h" 
 #include "ScoreKeeper.h"
 #include "Player.h"
+#include "Computer.h"
 #include "IPlayerListener.h"
+#include "IComputerListener.h"
 #include "HighScoreTable.h"
 
 
 class GameObject;
 class Spaceship;
+class ComputerSpaceShip;
 class GUILabel;
 class GUIButton;
 
-class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
+class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener, public IComputerListener
 {
 public:
 	Asteroids(int argc, char *argv[]);
@@ -37,9 +40,10 @@ public:
 
 	void OnScoreChanged(int score);
 
-	// Declaration of the IPlayerLister interface //////////////////////////////
+	// Declaration of the IPlayerListener interface //////////////////////////////
 
 	void OnPlayerKilled(int lives_left);
+	void OnComputerKilled();
 
 	// Declaration of IGameWorldListener interface //////////////////////////////
 
@@ -52,6 +56,7 @@ public:
 
 private:
 	shared_ptr<Spaceship> mSpaceship;
+	shared_ptr<ComputerSpaceShip> mComputerSpaceShip;
 	shared_ptr<GUILabel> mScoreLabel;
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
@@ -67,7 +72,9 @@ private:
 	uint mScreen;
 
 	void ResetSpaceship();
+	void ResetComputerSpaceShip();
 	shared_ptr<GameObject> CreateSpaceship();
+	shared_ptr<GameObject> CreateComputerSpaceShip();
 	void CreateGUI();
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
@@ -75,10 +82,12 @@ private:
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;
 	const static uint CREATE_NEW_PLAYER = 2;
+	const static uint CREATE_NEW_COMPUTER = 4;
 	const static uint START_SCREEN = 3;
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
+	Computer mComputer;
 	HighScoreTable mhighscoretable;
 };
 

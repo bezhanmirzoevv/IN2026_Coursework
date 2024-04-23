@@ -7,6 +7,7 @@
 #include "GameWorld.h"
 #include "GameDisplay.h"
 #include "Spaceship.h"
+#include "ComputerSpaceShip.h"
 #include "BoundingShape.h"
 #include "BoundingSphere.h"
 #include "GUILabel.h"
@@ -71,9 +72,11 @@ void Asteroids::Start()
 
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
+	mGameWorld->AddListener(&mComputer);
 
 	// Add this class as a listener of the player
 	mPlayer.AddListener(thisPtr);
+	mComputer.AddListener(thisPtr);
 
 	// Start the game
 	GameSession::Start();
@@ -97,7 +100,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	case 1:
 		switch (key) {
 		case ' ':
-			mSpaceship->Shoot();
+			mComputerSpaceShip->Shoot();
+			//mSpaceship->Shoot();
 			break;
 		default:
 			break;
@@ -115,7 +119,8 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mLivesLabel->SetVisible(true);
 
 			// Create a spaceship and add it to the world
-			mGameWorld->AddObject(CreateSpaceship());
+			mGameWorld->AddObject(CreateComputerSpaceShip());
+			//mGameWorld->AddObject(CreateSpaceship());
 			break;
 		case 's':
 			mScreen = 3;
@@ -161,11 +166,11 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 		switch (key)
 		{
 			// If up arrow key is pressed start applying forward thrust
-		case GLUT_KEY_UP: mSpaceship->Thrust(10); break;
+		case GLUT_KEY_UP: /*mSpaceship->Thrust(10); */ mComputerSpaceShip->Thrust(10); break;
 			// If left arrow key is pressed start rotating anti-clockwise
-		case GLUT_KEY_LEFT: mSpaceship->Rotate(90); break;
+		case GLUT_KEY_LEFT: /*mSpaceship->Rotate(90); */ mComputerSpaceShip->Rotate(90); break;
 			// If right arrow key is pressed start rotating clockwise
-		case GLUT_KEY_RIGHT: mSpaceship->Rotate(-90); break;
+		case GLUT_KEY_RIGHT: /*mSpaceship->Rotate(-90); */ mComputerSpaceShip->Rotate(-90); break;
 			// Default case - do nothing
 		default: break;
 		}
@@ -178,11 +183,11 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 		switch (key)
 		{
 			// If up arrow key is released stop applying forward thrust
-		case GLUT_KEY_UP: mSpaceship->Thrust(0); break;
+		case GLUT_KEY_UP: /*mSpaceship->Thrust(0); */ mComputerSpaceShip->Thrust(0); break;
 			// If left arrow key is released stop rotating
-		case GLUT_KEY_LEFT: mSpaceship->Rotate(0); break;
+		case GLUT_KEY_LEFT: /*mSpaceship->Rotate(0); */ mComputerSpaceShip->Rotate(0); break;
 			// If right arrow key is released stop rotating
-		case GLUT_KEY_RIGHT: mSpaceship->Rotate(0); break;
+		case GLUT_KEY_RIGHT: /*mSpaceship->Rotate(0); */ mComputerSpaceShip->Rotate(0); break;
 			// Default case - do nothing
 		default: break;
 		}
@@ -194,7 +199,7 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 
 void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 {
-	if (object->GetType() == GameObjectType("Asteroid"))
+	if (object->GetType() == GameObjectType("Asteroid") && mScreen == 1)
 	{
 		shared_ptr<GameObject> explosion = CreateExplosion();
 		explosion->SetPosition(object->GetPosition());
@@ -216,6 +221,12 @@ void Asteroids::OnTimer(int value)
 	{
 		mSpaceship->Reset();
 		mGameWorld->AddObject(mSpaceship);
+		
+	}
+	if (value == CREATE_NEW_COMPUTER) 
+	{
+		mComputerSpaceShip->Reset();
+		mGameWorld->AddObject(mComputerSpaceShip);
 	}
 
 	if (value == START_NEXT_LEVEL)
@@ -256,6 +267,26 @@ shared_ptr<GameObject> Asteroids::CreateSpaceship()
 	mSpaceship->Reset();
 	// Return the spaceship so it can be added to the world
 	return mSpaceship;
+
+}
+
+shared_ptr<GameObject> Asteroids::CreateComputerSpaceShip()
+{
+	// Create a raw pointer to a spaceship that can be converted to
+	// shared_ptrs of different types because GameWorld implements IRefCount
+	mComputerSpaceShip = make_shared<ComputerSpaceShip>();
+	mComputerSpaceShip->SetBoundingShape(make_shared<BoundingSphere>(mComputerSpaceShip->GetThisPtr(), 4.0f));
+	shared_ptr<Shape> bullet_shape = make_shared<Shape>("bullet.shape");
+	mComputerSpaceShip->SetBulletShape(bullet_shape);
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
+	shared_ptr<Sprite> spaceship_sprite =
+		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	mComputerSpaceShip->SetSprite(spaceship_sprite);
+	mComputerSpaceShip->SetScale(0.1f);
+	// Reset spaceship back to centre of the world
+	mComputerSpaceShip->Reset();
+	// Return the spaceship so it can be added to the world
+	return mComputerSpaceShip;
 
 }
 
@@ -350,12 +381,6 @@ void Asteroids::CreateGUI()
 	shared_ptr<GUIComponent> high_score_component2 = static_pointer_cast<GUIComponent>(mHighScoreLabel2);
 	mGameDisplay->GetContainer()->AddComponent(high_score_component, GLVector2f(0.5f, 0.25f));
 	mGameDisplay->GetContainer()->AddComponent(high_score_component2, GLVector2f(0.5f, 0.9f));
-
-	//map mscores
-	//Start Button
-	//mStartButton = shared_ptr<GUIButton>(new GUIButton(1.0f, 1.0f, 1.0f, 1.0f));
-	//shared_ptr<GUIComponent> start_button_component = static_pointer_cast<GUIComponent>(mStartButton);
-	//mGameDisplay->GetContainer()->AddComponent(start_button_component, GLVector2f(0.5f, 0.3f));
 	
 }
 
@@ -372,8 +397,10 @@ void Asteroids::OnScoreChanged(int score)
 void Asteroids::OnPlayerKilled(int lives_left)
 {
 	shared_ptr<GameObject> explosion = CreateExplosion();
-	explosion->SetPosition(mSpaceship->GetPosition());
-	explosion->SetRotation(mSpaceship->GetRotation());
+	/*explosion->SetPosition(mSpaceship->GetPosition());
+	explosion->SetRotation(mSpaceship->GetRotation());*/
+	explosion->SetPosition(mComputerSpaceShip->GetPosition());
+	explosion->SetRotation(mComputerSpaceShip->GetRotation());
 	mGameWorld->AddObject(explosion);
 
 	// Format the lives left message using an string-based stream
@@ -391,6 +418,15 @@ void Asteroids::OnPlayerKilled(int lives_left)
 	{
 		SetTimer(500, SHOW_GAME_OVER);
 	}
+}
+
+void Asteroids::OnComputerKilled()
+{
+	shared_ptr<GameObject> explosion = CreateExplosion();
+	explosion->SetPosition(mComputerSpaceShip->GetPosition());
+	explosion->SetRotation(mComputerSpaceShip->GetRotation());
+	mGameWorld->AddObject(explosion);
+	SetTimer(1000, CREATE_NEW_COMPUTER);
 }
 
 shared_ptr<GameObject> Asteroids::CreateExplosion()
