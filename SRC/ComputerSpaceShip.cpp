@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "ComputerSpaceShip.h"
 #include "BoundingSphere.h"
+#include "GameObject.h"
 
 using namespace std;
 
@@ -102,5 +103,6 @@ bool ComputerSpaceShip::CollisionTest(shared_ptr<GameObject> o)
 
 void ComputerSpaceShip::OnCollision(const GameObjectList& objects)
 {
-	mWorld->FlagForRemoval(GetThisPtr());
+	//this->Reset();
+	//mWorld->FlagForRemoval(GetThisPtr());
 }

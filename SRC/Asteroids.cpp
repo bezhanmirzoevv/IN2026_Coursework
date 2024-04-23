@@ -7,7 +7,7 @@
 #include "GameWorld.h"
 #include "GameDisplay.h"
 #include "Spaceship.h"
-#include "ComputerSpaceShip.h"
+#include "ComputerSpaceShip.cpp"
 #include "BoundingShape.h"
 #include "BoundingSphere.h"
 #include "GUILabel.h"
@@ -225,8 +225,8 @@ void Asteroids::OnTimer(int value)
 	}
 	if (value == CREATE_NEW_COMPUTER) 
 	{
-		mComputerSpaceShip->Reset();
-		mGameWorld->AddObject(mComputerSpaceShip);
+		//mComputerSpaceShip->Reset();
+		//mGameWorld->AddObject(mComputerSpaceShip);
 	}
 
 	if (value == START_NEXT_LEVEL)
@@ -397,10 +397,8 @@ void Asteroids::OnScoreChanged(int score)
 void Asteroids::OnPlayerKilled(int lives_left)
 {
 	shared_ptr<GameObject> explosion = CreateExplosion();
-	/*explosion->SetPosition(mSpaceship->GetPosition());
-	explosion->SetRotation(mSpaceship->GetRotation());*/
-	explosion->SetPosition(mComputerSpaceShip->GetPosition());
-	explosion->SetRotation(mComputerSpaceShip->GetRotation());
+	explosion->SetPosition(mSpaceship->GetPosition());
+	explosion->SetRotation(mSpaceship->GetRotation());
 	mGameWorld->AddObject(explosion);
 
 	// Format the lives left message using an string-based stream

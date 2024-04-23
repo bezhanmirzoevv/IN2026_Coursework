@@ -1,5 +1,6 @@
 #ifndef __HIGHSCORETABLE_H__
 #define __HIGHSCORETABLE_H__
+
 #include "GameDisplay.h"
 #include "GUILabel.h"
 #include <map>
