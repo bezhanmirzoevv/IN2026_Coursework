@@ -72,16 +72,15 @@ void Asteroids::Start()
 
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
-	mGameWorld->AddListener(&mComputer);
+	//mGameWorld->AddListener(&mComputer);
 
-
+	//Spawn the Compter space ship
 	mGameWorld->AddObject(CreateComputerSpaceShip());
-	//mGameWorld->AddObject(CreateSpaceship());
+	
 
 	// Add this class as a listener of the player
 	mPlayer.AddListener(thisPtr);
-	mComputer.AddListener(thisPtr);
-
+	//mComputer.AddListener(thisPtr);
 
 
 	// Start the game
@@ -125,8 +124,13 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 
 			// remove the demo spaceship and reset world
 			mGameWorld->FlagForRemoval(mComputerSpaceShip->GetThisPtr());
+
+			//reset score to start game
+			mScoreKeeper.ResetScore();
+			mScoreKeeper.FireScoreChanged();
+		
 			// Create a spaceship and add it to the world
-			//mGameWorld->AddObject(CreateSpaceship());
+			mGameWorld->AddObject(CreateSpaceship());
 			break;
 		case 's':
 			mScreen = 3;
@@ -152,7 +156,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mLivesLabel->SetVisible(true);
 			mhighscoretable.removeScores(mGameDisplay);
 			// Create a spaceship and add it to the world
-			//mGameWorld->AddObject(CreateSpaceship());
+			mGameWorld->AddObject(CreateSpaceship());
 			break;
 		default:
 			break;
@@ -214,8 +218,13 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		mAsteroidCount--;
 		if (mAsteroidCount <= 0)
 		{
-			SetTimer(500, START_NEXT_LEVEL);
+			if (mScreen == 1) {
+				SetTimer(500, START_NEXT_LEVEL);
+			}else {
+				SetTimer(500, RESPAWN_ASTEROIDS);
+			}
 		}
+
 	}
 }
 
@@ -229,10 +238,9 @@ void Asteroids::OnTimer(int value)
 		mGameWorld->AddObject(mSpaceship);
 
 	}
-	if (value == CREATE_NEW_COMPUTER)
+	if (value == RESPAWN_ASTEROIDS)
 	{
-		//mComputerSpaceShip->Reset();
-		//mGameWorld->AddObject(mComputerSpaceShip);
+		CreateAsteroids(10);
 	}
 
 	if (value == START_NEXT_LEVEL)
@@ -426,7 +434,7 @@ void Asteroids::OnPlayerKilled(int lives_left)
 
 void Asteroids::OnComputerKilled(int lives_left)
 {
-	//SetTimer(1000, CREATE_NEW_COMPUTER);
+	
 }
 
 shared_ptr<GameObject> Asteroids::CreateExplosion()

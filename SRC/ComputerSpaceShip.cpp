@@ -106,6 +106,3 @@ void ComputerSpaceShip::OnCollision(const GameObjectList& objects)
 	//mWorld->FlagForRemoval(GetThisPtr());
 }
 
-void ComputerSpaceShip::Remove() {
-	mWorld->FlagForRemoval(GetThisPtr());
-}

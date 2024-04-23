@@ -83,8 +83,8 @@ private:
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;
 	const static uint CREATE_NEW_PLAYER = 2;
-	const static uint CREATE_NEW_COMPUTER = 4;
 	const static uint START_SCREEN = 3;
+	const static uint RESPAWN_ASTEROIDS = 4;
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
