@@ -75,6 +75,7 @@ void Asteroids::Start()
 	mGameWorld->AddListener(&mComputer);
 
 
+	mGameWorld->AddObject(CreateComputerSpaceShip());
 	//mGameWorld->AddObject(CreateSpaceship());
 
 	// Add this class as a listener of the player
@@ -105,8 +106,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	case 1:
 		switch (key) {
 		case ' ':
-			//mComputerSpaceShip->Shoot();
-			//mSpaceship->Shoot();
+			mSpaceship->Shoot();
 			break;
 		default:
 			break;
@@ -123,11 +123,10 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mScoreLabel->SetVisible(true);
 			mLivesLabel->SetVisible(true);
 
+			// remove the demo spaceship and reset world
+			mGameWorld->FlagForRemoval(mComputerSpaceShip->GetThisPtr());
 			// Create a spaceship and add it to the world
-			//mGameWorld->FlagForRemoval(mSpaceship);
-			//mComputerSpaceShip->~ComputerSpaceShip();
-			//mGameWorld->AddObject(CreateComputerSpaceShip());
-			mGameWorld->AddObject(CreateSpaceship());
+			//mGameWorld->AddObject(CreateSpaceship());
 			break;
 		case 's':
 			mScreen = 3;
@@ -427,7 +426,7 @@ void Asteroids::OnPlayerKilled(int lives_left)
 
 void Asteroids::OnComputerKilled(int lives_left)
 {
-	
+	//SetTimer(1000, CREATE_NEW_COMPUTER);
 }
 
 shared_ptr<GameObject> Asteroids::CreateExplosion()

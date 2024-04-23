@@ -11,13 +11,13 @@ using namespace std;
 
 /**  Default constructor. */
 ComputerSpaceShip::ComputerSpaceShip()
-	: GameObject("Spaceship"), mThrust(0)
+	: GameObject("ComputerSpaceShip"), mThrust(0)
 {
 }
 
 /** Construct a spaceship with given position, velocity, acceleration, angle, and rotation. */
 ComputerSpaceShip::ComputerSpaceShip(GLVector3f p, GLVector3f v, GLVector3f a, GLfloat h, GLfloat r)
-	: GameObject("Spaceship", p, v, a, h, r), mThrust(0)
+	: GameObject("ComputerSpaceShip", p, v, a, h, r), mThrust(0)
 {
 }
 
@@ -103,6 +103,9 @@ bool ComputerSpaceShip::CollisionTest(shared_ptr<GameObject> o)
 
 void ComputerSpaceShip::OnCollision(const GameObjectList& objects)
 {
-	//this->Reset();
-	//mWorld->RemoveObject(GetThisPtr());
+	//mWorld->FlagForRemoval(GetThisPtr());
+}
+
+void ComputerSpaceShip::Remove() {
+	mWorld->FlagForRemoval(GetThisPtr());
 }
