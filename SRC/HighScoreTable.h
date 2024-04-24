@@ -3,6 +3,11 @@
 #include "GameDisplay.h"
 #include "GUILabel.h"
 #include <map>
+#include <iostream>
+#include <map>
+#include <vector>
+#include <algorithm>
+
 using namespace std;
 
 class GUILabel;
@@ -13,6 +18,8 @@ public:
 	void printScores(GameDisplay* a);
 	void removeScores(GameDisplay* a);
 	void SaveScores(string s, int b);
+	std::map<std::string, int> sortMapByValue(const std::map<std::string, int>& inputMap);
+
 
 	int labelpointer;
 	map<string, int> scoreMap;

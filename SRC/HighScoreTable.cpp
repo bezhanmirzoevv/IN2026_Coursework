@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 
@@ -132,8 +134,9 @@ void HighScoreTable::SaveScores(string playerName, int playerScore)
 			if (score < playerScore) {
 				store = 1;
 				scoreMap[playerName] = playerScore;
-			}else {
-				store = 3;
+			}
+			else {
+				store = 1;
 			}
 			break;
 		}
@@ -142,22 +145,44 @@ void HighScoreTable::SaveScores(string playerName, int playerScore)
 
 	switch (store) {
 	case 0:
-	{
-		std::ofstream file3;
-		file3.open("HighScores.txt", std::ios_base::app); // append instead of overwrite
-		file3 << playerName << " " << playerScore << endl;
-		file3.close();
-	}
-		break;
+		scoreMap.insert(make_pair(playerName, playerScore));
 
 	case 1:
 	{
+		//sort scores
+		std::map<std::string, int> sortedMap = sortMapByValue(scoreMap);
+
 		std::fstream file1("HighScores.txt");
-		for (auto& pair : scoreMap) {
+		for (auto& pair : sortedMap) {
 			file1 << pair.first << " " << pair.second << endl;
 		}
 		file1.close();
 	}
 		break;
 	}
+}
+
+std::map<std::string, int> HighScoreTable::sortMapByValue(const std::map<std::string, int>& inputMap) {
+	std::vector<std::pair<std::string, int>> vec(inputMap.begin(), inputMap.end());
+
+	// Insertion sort
+	for (size_t i = 1; i < vec.size(); ++i) {
+		std::pair<std::string, int> key = vec[i];
+		int j = i - 1;
+
+		// Move elements of vec[0..i-1], that are greater than key, to one position ahead
+		while (j >= 0 && vec[j].second > key.second) {
+			vec[j + 1] = vec[j];
+			--j;
+		}
+		vec[j + 1] = key;
+	}
+
+	// Create a new map to store the sorted key-value pairs
+	std::map<std::string, int> sortedMap;
+	for (const auto& pair : vec) {
+		sortedMap.insert(pair);
+	}
+
+	return sortedMap;
 }
