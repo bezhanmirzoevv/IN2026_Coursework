@@ -145,7 +145,7 @@ void HighScoreTable::SaveScores(string playerName, int playerScore)
 	{
 		std::ofstream file3;
 		file3.open("HighScores.txt", std::ios_base::app); // append instead of overwrite
-		file3 << playerName << " " << playerScore;
+		file3 << playerName << " " << playerScore << endl;
 		file3.close();
 	}
 		break;

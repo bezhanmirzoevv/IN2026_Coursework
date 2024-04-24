@@ -128,9 +128,13 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			//reset score to start game
 			mScoreKeeper.ResetScore();
 			mScoreKeeper.FireScoreChanged();
+
+			//addback any destoryed asteroids from computer
+			CreateAsteroids(10 - mAsteroidCount);
+			mAsteroidCount = 10;
 		
 			// Create a spaceship and add it to the world
-			mGameWorld->AddObject(CreateSpaceship());
+			SetTimer(500, START_GAME);
 			break;
 		case 's':
 			mScreen = 3;
@@ -155,8 +159,20 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			mScoreLabel->SetVisible(true);
 			mLivesLabel->SetVisible(true);
 			mhighscoretable.removeScores(mGameDisplay);
+
+			// remove the demo spaceship and reset world
+			mGameWorld->FlagForRemoval(mComputerSpaceShip->GetThisPtr());
+
+			//reset score to start game
+			mScoreKeeper.ResetScore();
+			mScoreKeeper.FireScoreChanged();
+
+			//addback any destoryed asteroids from computer
+			CreateAsteroids(10 - mAsteroidCount);
+			mAsteroidCount = 10;
+
 			// Create a spaceship and add it to the world
-			mGameWorld->AddObject(CreateSpaceship());
+			SetTimer(500, START_GAME);
 			break;
 		default:
 			break;
@@ -244,6 +260,11 @@ void Asteroids::OnTimer(int value)
 	if (value == RESPAWN_ASTEROIDS)
 	{
 		CreateAsteroids(10);
+	}
+
+	if (value == START_GAME) 
+	{
+		mGameWorld->AddObject(CreateSpaceship());
 	}
 
 	if (value == START_NEXT_LEVEL)

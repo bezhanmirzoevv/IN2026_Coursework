@@ -85,6 +85,7 @@ private:
 	const static uint CREATE_NEW_PLAYER = 2;
 	const static uint START_SCREEN = 3;
 	const static uint RESPAWN_ASTEROIDS = 4;
+	const static uint START_GAME = 5;
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
