@@ -116,25 +116,11 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 	case 2:
 		switch (key) {
 		case ' ':
-			mScreen = 1;
+			mScreen = 4;
 			mStartLabel1->SetVisible(false);
 			mHighScoreLabel1->SetVisible(false);
-			mScoreLabel->SetVisible(true);
-			mLivesLabel->SetVisible(true);
-
-			// remove the demo spaceship and reset world
-			mGameWorld->FlagForRemoval(mComputerSpaceShip->GetThisPtr());
-
-			//reset score to start game
-			mScoreKeeper.ResetScore();
-			mScoreKeeper.FireScoreChanged();
-
-			//addback any destoryed asteroids from computer
-			CreateAsteroids(10 - mAsteroidCount);
-			mAsteroidCount = 10;
-		
-			// Create a spaceship and add it to the world
-			SetTimer(500, START_GAME);
+			mPlayerName->SetVisible(true);
+			mPlayerNameInput->SetVisible(true);
 			break;
 		case 's':
 			mScreen = 3;
@@ -149,16 +135,51 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		}
 		break;
 
-		//high score screen
+	//high score screen
 	case 3:
 		switch (key) {
 		case ' ':
-			mScreen = 1;
+			mScreen = 4;
 			mStartLabel2->SetVisible(false);
 			mHighScoreLabel2->SetVisible(false);
+			mhighscoretable.removeScores(mGameDisplay);
+			mPlayerName->SetVisible(true);
+			mPlayerNameInput->SetVisible(true);
+			break;
+		default:
+			break;
+		}
+		break;
+
+		//input screen for player
+	case 4:
+		switch (key) {
+		case ' ':
+			break;
+		default:
+			mPlayer.setPlayerName(key);
+			mPlayerName->SetText(mPlayer.getPlayerName());
+			break;
+		}
+	default:
+		break;
+	}
+}
+
+void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
+
+void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
+{
+	if (mScreen == 4) 
+	{
+		switch (key)
+		{
+			// If up arrow key is pressed when player is unputting name the game is started
+		case GLUT_KEY_UP:
 			mScoreLabel->SetVisible(true);
 			mLivesLabel->SetVisible(true);
-			mhighscoretable.removeScores(mGameDisplay);
+			mPlayerName->SetVisible(false);
+			mPlayerNameInput->SetVisible(false);
 
 			// remove the demo spaceship and reset world
 			mGameWorld->FlagForRemoval(mComputerSpaceShip->GetThisPtr());
@@ -174,29 +195,22 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 			// Create a spaceship and add it to the world
 			SetTimer(500, START_GAME);
 			break;
-		default:
+		case GLUT_KEY_LEFT:
+			mPlayer.removeLetter();
+			mPlayerName->SetText(mPlayer.getPlayerName());
 			break;
+		default: break;
 		}
-		break;
-
-	default:
-		break;
 	}
-}
-
-void Asteroids::OnKeyReleased(uchar key, int x, int y) {}
-
-void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
-{
 	if (mScreen == 1) {
 		switch (key)
 		{
 			// If up arrow key is pressed start applying forward thrust
-		case GLUT_KEY_UP: mSpaceship->Thrust(10);  /*mComputerSpaceShip->Thrust(10);*/ break;
+		case GLUT_KEY_UP: mSpaceship->Thrust(10); break;
 			// If left arrow key is pressed start rotating anti-clockwise
-		case GLUT_KEY_LEFT: mSpaceship->Rotate(90);  /*mComputerSpaceShip->Rotate(90);*/ break;
+		case GLUT_KEY_LEFT: mSpaceship->Rotate(90); break;
 			// If right arrow key is pressed start rotating clockwise
-		case GLUT_KEY_RIGHT: mSpaceship->Rotate(-90);  /*mComputerSpaceShip->Rotate(-90);*/ break;
+		case GLUT_KEY_RIGHT: mSpaceship->Rotate(-90); break;
 			// Default case - do nothing
 		default: break;
 		}
@@ -209,11 +223,11 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 		switch (key)
 		{
 			// If up arrow key is released stop applying forward thrust
-		case GLUT_KEY_UP: mSpaceship->Thrust(0); /*mComputerSpaceShip->Thrust(0);*/ break;
+		case GLUT_KEY_UP: mSpaceship->Thrust(0); break;
 			// If left arrow key is released stop rotating
-		case GLUT_KEY_LEFT: mSpaceship->Rotate(0); /*mComputerSpaceShip->Rotate(0);*/ break;
+		case GLUT_KEY_LEFT: mSpaceship->Rotate(0); break;
 			// If right arrow key is released stop rotating
-		case GLUT_KEY_RIGHT: mSpaceship->Rotate(0);/* mComputerSpaceShip->Rotate(0);*/ break;
+		case GLUT_KEY_RIGHT: mSpaceship->Rotate(0); break;
 			// Default case - do nothing
 		default: break;
 		}
@@ -265,6 +279,7 @@ void Asteroids::OnTimer(int value)
 	if (value == START_GAME) 
 	{
 		mGameWorld->AddObject(CreateSpaceship());
+		mScreen = 1;
 	}
 
 	if (value == START_NEXT_LEVEL)
@@ -278,7 +293,7 @@ void Asteroids::OnTimer(int value)
 	{
 		mGameOverLabel->SetVisible(true);
 		//store the score in the file
-		mhighscoretable.SaveScores("jack", mScoreKeeper.getScore());
+		mhighscoretable.SaveScores(mPlayer.getPlayerName(), mScoreKeeper.getScore());
 	}
 
 	if (value == START_SCREEN)
@@ -381,8 +396,7 @@ void Asteroids::CreateGUI()
 	// Set the visibility of the label to false (hidden)
 	mGameOverLabel->SetVisible(false);
 	// Add the GUILabel to the GUIContainer  
-	shared_ptr<GUIComponent> game_over_component
-		= static_pointer_cast<GUIComponent>(mGameOverLabel);
+	shared_ptr<GUIComponent> game_over_component = static_pointer_cast<GUIComponent>(mGameOverLabel);
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
 
 	// Create a new GUILabel and wrap it up in a shared_ptr
@@ -419,6 +433,24 @@ void Asteroids::CreateGUI()
 	shared_ptr<GUIComponent> high_score_component2 = static_pointer_cast<GUIComponent>(mHighScoreLabel2);
 	mGameDisplay->GetContainer()->AddComponent(high_score_component, GLVector2f(0.5f, 0.25f));
 	mGameDisplay->GetContainer()->AddComponent(high_score_component2, GLVector2f(0.5f, 0.9f));
+
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mPlayerName = shared_ptr<GUILabel>(new GUILabel(mPlayer.getPlayerName()));
+	mPlayerNameInput = shared_ptr<GUILabel>(new GUILabel("Name (<- delete | UpArrow to play):"));
+	// Set the horizontal alignment of the button to GUI_HALIGN_CENTER
+	mPlayerName->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	mPlayerNameInput->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the button to GUI_VALIGN_MIDDLE
+	mPlayerName->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOMMIDDLEMIDDLE);
+	mPlayerNameInput->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOP);
+	// Set the visibility of the button to true (visible)
+	mPlayerName->SetVisible(false);
+	mPlayerNameInput->SetVisible(false);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> player_name_component = static_pointer_cast<GUIComponent>(mPlayerName);
+	shared_ptr<GUIComponent> player_nameInput_component = static_pointer_cast<GUIComponent>(mPlayerNameInput);
+	mGameDisplay->GetContainer()->AddComponent(player_name_component, GLVector2f(0.5f, 0.4f));
+	mGameDisplay->GetContainer()->AddComponent(player_nameInput_component, GLVector2f(0.5f, 0.6f));
 
 }
 

@@ -39,9 +39,18 @@ public:
 			(*lit)->OnPlayerKilled(mLives);
 		}
 	}
+	string getPlayerName() { return mName; }
+	void setPlayerName(char t) { mName += t; }
+	void removeLetter() {
+		if (!mName.empty()) // Check if mName is not empty
+		{
+			mName.pop_back(); // Remove the last character
+		}
+	}
 
 private:
 	int mLives;
+	string mName = "";
 
 	typedef std::list< shared_ptr<IPlayerListener> > PlayerListenerList;
 

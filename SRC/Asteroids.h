@@ -65,7 +65,8 @@ private:
 	shared_ptr<GUILabel> mStartLabel2;
 	shared_ptr<GUILabel> mHighScoreLabel1;
 	shared_ptr<GUILabel> mHighScoreLabel2;
-	shared_ptr<GUIButton> mStartButton;
+	shared_ptr<GUILabel> mPlayerNameInput;
+	shared_ptr<GUILabel> mPlayerName;
 
 
 	uint mLevel;
