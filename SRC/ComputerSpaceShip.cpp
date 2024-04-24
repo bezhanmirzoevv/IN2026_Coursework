@@ -4,6 +4,13 @@
 #include "ComputerSpaceShip.h"
 #include "BoundingSphere.h"
 #include "GameObject.h"
+#include <cstdlib> // for rand() and srand()
+#include <ctime>   // for time()
+#include <thread>  // for std::this_thread::sleep_for
+#include <chrono>  // for std::chrono::milliseconds
+#define _USE_MATH_DEFINES
+#include <cmath>
+#define RAD2DEG (180.0 / M_PI)
 
 using namespace std;
 
@@ -39,6 +46,8 @@ void ComputerSpaceShip::Update(int t)
 {
 	// Call parent update function
 	GameObject::Update(t);
+	
+	Navigation(mWorld->getGameObjects(), 2.0f);
 }
 
 /** Render this spaceship. */
@@ -103,6 +112,73 @@ bool ComputerSpaceShip::CollisionTest(shared_ptr<GameObject> o)
 
 void ComputerSpaceShip::OnCollision(const GameObjectList& objects)
 {
+	//this->SetVelocity(GLVector3f(0, 0, 0));
+	//Thrust(0);
 	//mWorld->FlagForRemoval(GetThisPtr());
 }
 
+void ComputerSpaceShip::AimAtPosition(const GLVector3f& targetPosition)
+{
+	// Calculate direction to target position
+	GLVector3f direction = targetPosition - mPosition;
+
+	// Calculate angle to align with direction
+	float targetAngle = RAD2DEG * atan2(direction.y, direction.x);
+	float angleDiff = targetAngle - mAngle;
+	if (angleDiff > 180)
+		angleDiff -= 360;
+	else if (angleDiff < -180)
+		angleDiff += 360;
+
+	// Adjust rotation to align with direction
+	Rotate(angleDiff);
+
+	if (mFireCooldown <= 0) {
+		Shoot(); // Fire a bullet
+		mFireCooldown = mFireInterval; // Reset the cooldown timer
+	}
+	// Update the cooldown timer
+	mFireCooldown -= 1.0f;
+}
+
+void ComputerSpaceShip::Navigation(const GameObjectList& asteroids, float maxThrust)
+{
+	// Find nearest asteroid
+	float minDistance = std::numeric_limits<float>::max();
+	GLVector3f targetDirection;
+	for (const auto& asteroid : asteroids)
+	{
+		if (asteroid->GetType() != GameObjectType("Asteroid"))
+			continue;
+
+		GLVector3f direction = asteroid->GetPosition() - mPosition;
+		float distance = direction.length();
+		if (distance < minDistance)
+		{
+			minDistance = distance;
+			targetDirection = direction;
+		}
+	}
+
+	// Calculate angle to align with direction
+	float targetAngle = RAD2DEG * atan2(targetDirection.y, targetDirection.x);
+	float angleDiff = targetAngle - mAngle;
+	if (angleDiff > 180) {
+		angleDiff -= 500;
+	}else if (angleDiff < -180) {
+		angleDiff += 500;
+	}
+
+	// Adjust rotation to align with direction
+	Rotate(angleDiff);
+
+	//Shoot the asteroid
+	if (minDistance < maxTargetingDistance) // Check if asteroid is within shooting range
+	{
+		// Aim at the predicted future position of the asteroid
+		AimAtPosition(targetDirection);
+	}
+
+	// Thrust towards asteroid
+	Thrust(maxThrust);
+}

@@ -72,7 +72,7 @@ void Asteroids::Start()
 
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
-	//mGameWorld->AddListener(&mComputer);
+	mGameWorld->AddListener(&mComputer);
 
 	//Spawn the Compter space ship
 	mGameWorld->AddObject(CreateComputerSpaceShip());
@@ -80,7 +80,7 @@ void Asteroids::Start()
 
 	// Add this class as a listener of the player
 	mPlayer.AddListener(thisPtr);
-	//mComputer.AddListener(thisPtr);
+	mComputer.AddListener(thisPtr);
 
 
 	// Start the game
@@ -216,6 +216,9 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		explosion->SetRotation(object->GetRotation());
 		mGameWorld->AddObject(explosion);
 		mAsteroidCount--;
+		if (mScreen != 1) {
+			mComputerSpaceShip->SetVelocity(GLVector3f(0, 0, 0));
+		}
 		if (mAsteroidCount <= 0)
 		{
 			if (mScreen == 1) {

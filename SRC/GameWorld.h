@@ -46,6 +46,8 @@ public:
 	void SetHeight(int h) { mHeight = h; }
 	int GetHeight() { return mHeight; }
 
+	GameObjectList getGameObjects() { return mGameObjects; }
+
 	void WrapXY(float &x, float &y);
 
 protected:

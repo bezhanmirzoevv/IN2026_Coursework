@@ -28,10 +28,15 @@ public:
 
 	bool CollisionTest(shared_ptr<GameObject> o);
 	void OnCollision(const GameObjectList& objects);
-
+	void AimAtPosition(const GLVector3f& targetPosition);
+	void Navigation(const GameObjectList& asteroids, float maxThrust);
 	
 private:
 	float mThrust;
+	float maxTargetingDistance = 30.0f;
+	float mFireCooldown = 300.0f; // Cooldown timer for firing bullets
+	float mFireInterval = 300.0f; // Interval between consecutive bullet fires
+
 
 	shared_ptr<Shape> mSpaceshipShape;
 	shared_ptr<Shape> mThrusterShape;
