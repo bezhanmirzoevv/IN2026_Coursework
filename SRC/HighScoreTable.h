@@ -4,7 +4,6 @@
 #include "GUILabel.h"
 #include <map>
 #include <iostream>
-#include <map>
 #include <vector>
 #include <algorithm>
 
